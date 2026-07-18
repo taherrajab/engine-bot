@@ -1,34 +1,48 @@
-package com.example.calculator.viewmodel
+package com.example.calculator
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class CalculatorViewModel : ViewModel() {
+    private val _displayString = MutableLiveData<String>()
+    val displayString: LiveData<String> get() = _displayString
 
-    private val _result = MutableLiveData<Double>()
-    val result: LiveData<Double> get() = _result
+    private var operand1: Double? = null
+    private var operand2: Double? = null
+    private var operator: String? = null
 
-    private val api = Retrofit.Builder()
-        .baseUrl("https://<YOUR_BACKEND_URL>") // Ensured to use HTTPS
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(CalculatorApi::class.java)
+    init {
+        _displayString.value = "0"
+    }
 
-    fun calculate(expression: String) {
-        viewModelScope.launch {
-            try {
-                val response = api.calculate(ExpressionRequest(expression))
-                if (response.success) {
-                    _result.value = response.result
-                }
-            } catch (e: Exception) {
-                _result.value = null // Handle error case
-            }
+    fun onNumberClicked(number: String) {
+        val currentDisplay = _displayString.value
+        if (currentDisplay == "0") {
+            _displayString.value = number
+        } else {
+            _displayString.value += number
         }
+    }
+
+    fun onOperatorClicked(op: String) {
+        operand1 = _displayString.value?.toDoubleOrNull()
+        operator = op
+        _displayString.value = "0"
+    }
+
+    fun onEqualsClicked() {
+        operand2 = _displayString.value?.toDoubleOrNull()
+        val result = when (operator) {
+            "+" -> operand1!! + operand2!!
+            "-" -> operand1!! - operand2!!
+            "*" -> operand1!! * operand2!!
+            "/" -> operand1!! / operand2!!
+            else -> 0.0
+        }
+        _displayString.value = result.toString()
+        operand1 = null
+        operand2 = null
+        operator = null
     }
 }
