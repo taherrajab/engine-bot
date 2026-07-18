@@ -3,7 +3,6 @@ package com.example.calculator
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewbinding.ViewBinding
 import com.example.calculator.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -15,44 +14,33 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupObservers()
-        setupListeners()
-    }
-
-    private fun setupObservers() {
-        viewModel.result.observe(this) { result ->
-            binding.tvDisplay.text = result.toString()
+        binding.tvDisplay.text = viewModel.displayString.value
+        viewModel.displayString.observe(this) { value ->
+            binding.tvDisplay.text = value
         }
+        setupNumberButtons()
+        setupOperatorButtons()
     }
 
-    private fun setupListeners() {
-        binding.btn0.setOnClickListener { appendToExpression("0") }
-        binding.btn1.setOnClickListener { appendToExpression("1") }
-        binding.btn2.setOnClickListener { appendToExpression("2") }
-        binding.btn3.setOnClickListener { appendToExpression("3") }
-        binding.btn4.setOnClickListener { appendToExpression("4") }
-        binding.btn5.setOnClickListener { appendToExpression("5") }
-        binding.btn6.setOnClickListener { appendToExpression("6") }
-        binding.btn7.setOnClickListener { appendToExpression("7") }
-        binding.btn8.setOnClickListener { appendToExpression("8") }
-        binding.btn9.setOnClickListener { appendToExpression("9") }
-        binding.btnPlus.setOnClickListener { appendToExpression("+") }
-        binding.btnMinus.setOnClickListener { appendToExpression("-") }
-        binding.btnMul.setOnClickListener { appendToExpression("*") }
-        binding.btnDiv.setOnClickListener { appendToExpression("/") }
-        binding.btnEquals.setOnClickListener { calculateResult() }
-        binding.btnClear.setOnClickListener { clearExpression() }
+    private fun setupNumberButtons() {
+        binding.btn0.setOnClickListener { viewModel.onNumberClicked("0") }
+        binding.btn1.setOnClickListener { viewModel.onNumberClicked("1") }
+        binding.btn2.setOnClickListener { viewModel.onNumberClicked("2") }
+        binding.btn3.setOnClickListener { viewModel.onNumberClicked("3") }
+        binding.btn4.setOnClickListener { viewModel.onNumberClicked("4") }
+        binding.btn5.setOnClickListener { viewModel.onNumberClicked("5") }
+        binding.btn6.setOnClickListener { viewModel.onNumberClicked("6") }
+        binding.btn7.setOnClickListener { viewModel.onNumberClicked("7") }
+        binding.btn8.setOnClickListener { viewModel.onNumberClicked("8") }
+        binding.btn9.setOnClickListener { viewModel.onNumberClicked("9") }
+        binding.btnDot.setOnClickListener { viewModel.onNumberClicked(".") }
     }
 
-    private fun appendToExpression(value: String) {
-        binding.tvDisplay.text = binding.tvDisplay.text.toString() + value
-    }
-
-    private fun calculateResult() {
-        viewModel.calculate(binding.tvDisplay.text.toString())
-    }
-
-    private fun clearExpression() {
-        binding.tvDisplay.text = "0"
+    private fun setupOperatorButtons() {
+        binding.btnPlus.setOnClickListener { viewModel.onOperatorClicked("+") }
+        binding.btnMinus.setOnClickListener { viewModel.onOperatorClicked("-") }
+        binding.btnMul.setOnClickListener { viewModel.onOperatorClicked("*") }
+        binding.btnDiv.setOnClickListener { viewModel.onOperatorClicked("/") }
+        binding.btnEquals.setOnClickListener { viewModel.onEqualsClicked() }
     }
 }
