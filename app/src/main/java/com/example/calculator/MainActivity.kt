@@ -14,15 +14,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.tvDisplay.text = viewModel.displayString.value
-        viewModel.displayString.observe(this) { value ->
-            binding.tvDisplay.text = value
-        }
-        setupNumberButtons()
-        setupOperatorButtons()
-    }
-
-    private fun setupNumberButtons() {
         binding.btn0.setOnClickListener { viewModel.onNumberClicked("0") }
         binding.btn1.setOnClickListener { viewModel.onNumberClicked("1") }
         binding.btn2.setOnClickListener { viewModel.onNumberClicked("2") }
@@ -33,14 +24,12 @@ class MainActivity : AppCompatActivity() {
         binding.btn7.setOnClickListener { viewModel.onNumberClicked("7") }
         binding.btn8.setOnClickListener { viewModel.onNumberClicked("8") }
         binding.btn9.setOnClickListener { viewModel.onNumberClicked("9") }
-        binding.btnDot.setOnClickListener { viewModel.onNumberClicked(".") }
-    }
 
-    private fun setupOperatorButtons() {
         binding.btnPlus.setOnClickListener { viewModel.onOperatorClicked("+") }
         binding.btnMinus.setOnClickListener { viewModel.onOperatorClicked("-") }
         binding.btnMul.setOnClickListener { viewModel.onOperatorClicked("*") }
         binding.btnDiv.setOnClickListener { viewModel.onOperatorClicked("/") }
+
         binding.btnEquals.setOnClickListener { viewModel.onEqualsClicked() }
     }
 }
