@@ -1,29 +1,34 @@
-package com.example.calculator
+package com.example.calculator.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.lang.Exception
-import java.util.regex.Pattern
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class CalculatorViewModel : ViewModel() {
-    private val _result = MutableLiveData<Int>()
-    val result: LiveData<Int> get() = _result
 
-    fun calculate(input: String) {
-        if (isValidInput(input)) {
-            _result.value = evaluateExpression(input)
-        } else {
-            _result.value = 0 // Handle invalid input
+    private val _result = MutableLiveData<Double>()
+    val result: LiveData<Double> get() = _result
+
+    private val api = Retrofit.Builder()
+        .baseUrl("https://<YOUR_BACKEND_URL>") // Ensured to use HTTPS
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(CalculatorApi::class.java)
+
+    fun calculate(expression: String) {
+        viewModelScope.launch {
+            try {
+                val response = api.calculate(ExpressionRequest(expression))
+                if (response.success) {
+                    _result.value = response.result
+                }
+            } catch (e: Exception) {
+                _result.value = null // Handle error case
+            }
         }
-    }
-
-    private fun evaluateExpression(input: String): Int {
-        return input.length // Placeholder logic for demonstration
-    }
-
-    private fun isValidInput(input: String): Boolean {
-        val pattern = Pattern.compile("^[0-9+\-*/.() ]+$")
-        return pattern.matcher(input).matches()
     }
 }
