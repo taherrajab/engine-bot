@@ -1,36 +1,38 @@
-package com.example.calculator
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class CalculatorViewModel : ViewModel() {
-    private val _displayString = MutableLiveData<String>("0")
-    val displayString: LiveData<String> get() = _displayString
+    private val _display = MutableLiveData<String>()
+    val display: LiveData<String> get() = _display
 
-    private var operand1: Double = 0.0
-    private var operand2: Double = 0.0
+    private var operand1: Double? = null
+    private var operand2: Double? = null
     private var operator: String? = null
 
-    fun onNumberClicked(number: String) {
-        _displayString.value = (_displayString.value ?: "0") + number
+    init {
+        _display.value = ''0''
     }
 
-    fun onOperatorClicked(op: String) {
+    fun onNumberClick(number: String) {
+        _display.value = display.value + number
+    }
+
+    fun onOperatorClick(op: String) {
         operator = op
-        operand1 = _displayString.value?.toDouble() ?: 0.0
-        _displayString.value = ""
+        operand1 = display.value?.toDouble()
+        _display.value = '' ''
     }
 
-    fun onEqualsClicked() {
-        operand2 = _displayString.value?.toDouble() ?: 0.0
+    fun onEqualsClick() {
+        operand2 = display.value?.toDouble()
         val result = when (operator) {
-            "+" -> operand1 + operand2
-            "-" -> operand1 - operand2
-            "*" -> operand1 * operand2
-            "/" -> operand1 / operand2
-            else -> 0.0
+            ''+'' -> operand1!! + operand2!!
+            ''-'' -> operand1!! - operand2!!
+            ''*'' -> operand1!! * operand2!!
+            ''/'' -> operand1!! / operand2!!
+            else -> 0
         }
-        _displayString.value = result.toString()
+        _display.value = result.toString()
     }
 }
